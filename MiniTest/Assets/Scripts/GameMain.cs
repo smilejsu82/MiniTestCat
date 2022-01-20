@@ -8,11 +8,19 @@ public class GameMain : MonoBehaviour
     public Button btnMoveStart;
     public Button btnMoveStop;
     public Image hpGauge;
-
+    public Text coinText;
     public Cat cat;
+    private int coinAmount;
 
     void Start()
     {
+        this.UpdateCoinAmountText();
+
+        cat.OnGetCoin = (amount) => {
+            this.coinAmount += amount;
+            this.UpdateCoinAmountText();
+        };
+
         cat.OnHit = () =>
         {
             //UI를 갱신 한다 
@@ -27,5 +35,9 @@ public class GameMain : MonoBehaviour
         this.btnMoveStop.onClick.AddListener(() => {
             cat.MoveStop();
         });
+    }
+
+    public void UpdateCoinAmountText() {
+        this.coinText.text = this.coinAmount.ToString();
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using System.Linq;
 
 public class Cat : MonoBehaviour
 {
@@ -18,6 +19,9 @@ public class Cat : MonoBehaviour
     public GameObject trapGo;
     private bool canHit = true;
     public UnityAction OnHit;
+    public UnityAction<int> OnGetCoin;
+
+    private List<Coin> coins = new List<Coin>();
 
     void Start()
     {
@@ -30,6 +34,8 @@ public class Cat : MonoBehaviour
         this.distanceText = GameObject.Find("distanceText").GetComponent<Text>();
         this.CalcDistance();
         this.UpdateDistanceText();
+
+        this.coins = GameObject.FindObjectsOfType<Coin>().ToList();
     }
 
     void Update()
@@ -45,6 +51,19 @@ public class Cat : MonoBehaviour
                     this.hp -= 1;
                     this.canHit = false;
                     this.OnHit();
+                }
+            }
+
+            for (int i = 0; i < this.coins.Count; i++) {
+                Coin coin = this.coins[i];
+                var dis2 = Vector2.Distance(this.transform.position, coin.transform.position);
+                if (dis2 < this.radius + coin.radius)
+                {
+                    Destroy(coin.gameObject);
+                    coins.Remove(coin);
+                    
+                    this.OnGetCoin(coin.amount);
+
                 }
             }
 
